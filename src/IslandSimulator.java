@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -65,6 +62,10 @@ public class IslandSimulator {
     public void removeOrganism(Organism organism, int xCoordinate, int yCoordinate) {
         Tile tile = getTile(xCoordinate, yCoordinate);
         tile.removeOrganism(organism);
+    }
+
+    public Set<Organism> retrieveSpecificOrganisms(Class<? extends Organism> clazz, int xCoordinate, int yCoordinate) {
+        return getTile(xCoordinate, yCoordinate).retrieveSpecificOrganisms(clazz);
     }
 
     public List<Organism> retrieveAllOrganisms() {

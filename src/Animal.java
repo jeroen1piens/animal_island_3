@@ -5,7 +5,15 @@ import java.util.stream.Collectors;
 public abstract class Animal extends Organism {
 
     private double fedLevel = 100;
+    private volatile boolean hasMate;
 
+    public boolean isHasMate() {
+        return hasMate;
+    }
+
+    public void setHasMate(boolean hasMate) {
+        this.hasMate = hasMate;
+    }
     protected abstract double getRequiredFoodWeight();
 
     public abstract Map<String, Integer> getCatchMap();
@@ -77,20 +85,27 @@ public abstract class Animal extends Organism {
         }
     }
 
-    /*
-    private List<Animal> localisePotentialMates() {
-        List<Organism> list = getIslandSimulator();
+
+    private Set<Animal> localisePotentialMates() {
+        Set<Organism> set = getIslandSimulator().retrieveSpecificOrganisms(this.getClass(), getXCoordinate(), getYCoordinate());
+        set.remove(this);
+        return set.stream()
+                .map(organism -> (Animal) organism)
+                .filter(animal -> !animal.isHasMate())
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
-    private Animal chooseMate() {
-
+    protected Animal chooseMate() {
+        for (Animal animal : localisePotentialMates()) {
+            synchronized (animal) {
+                if(!animal.isHasMate()) {
+                    hasMate = true;
+                    animal.setHasMate(true);
+                    return animal;
+                }
+            }
+        }
+        return null;
     }
-
-    public Animal breed() {
-
-    }
-
-
-    public abstract boolean hasMate();
-*/
+    public abstract boolean breed();
 }

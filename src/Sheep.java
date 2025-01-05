@@ -27,4 +27,11 @@ public class Sheep extends Animal {
     public double getWeight() {
         return weight;
     }
+
+    @Override
+    public boolean breed() {
+        Sheep sheep = getIslandSimulator().createSheep();
+        boolean successfull = sheep.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
+        return successfull;
+    }
 }

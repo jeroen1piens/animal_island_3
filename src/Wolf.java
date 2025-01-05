@@ -43,4 +43,11 @@ public class Wolf extends Animal {
     public double getWeight() {
         return weight;
     }
+
+    @Override
+    public boolean breed() {
+        Wolf wolf = getIslandSimulator().createWolf();
+        boolean successfull = wolf.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
+        return successfull;
+    }
 }

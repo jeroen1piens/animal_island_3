@@ -9,10 +9,10 @@ public class InitialOrganisms {
     public static final int RABBIT_COUNT = 20;
     public static final int MOUSE_COUNT = 20;
     public static final int GOAT_COUNT = 10;
-    public static final int SHEEP_COUNT = 10;
+    public static final int SHEEP_COUNT = 200;
     public static final int BOAR_COUNT = 10;
     public static final int BUFFALO_COUNT = 10;
     public static final int DUCK_COUNT = 20;
     public static final int CATERPILLAR_COUNT = 100;
-    public static final int PLANT_COUNT = 1000;
+    public static final int PLANT_COUNT = 400;
 }

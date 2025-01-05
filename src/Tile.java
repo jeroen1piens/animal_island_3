@@ -16,7 +16,7 @@ public class Tile {
 
     public Tile() {
     }
-    
+
     public boolean isFull(Organism organism) {
         if (!organismMap.containsKey(organism.getClass())) {
             return false;
@@ -33,7 +33,7 @@ public class Tile {
     private Set<Class<? extends Organism>> keySet() {
         return organismMap.keySet();
     }
-    private Set<Organism> getOrganismSet(Class<? extends Organism> clazz) {
+    public Set<Organism> retrieveSpecificOrganisms(Class<? extends Organism> clazz) {
         return organismMap.get(clazz);
     }
 
@@ -46,23 +46,23 @@ public class Tile {
             return false;
         }
         else if (contains(organism.getClass())) {
-            getOrganismSet(organism.getClass()).add(organism);
+            retrieveSpecificOrganisms(organism.getClass()).add(organism);
             return true;
         }
         else {
             addOrganismClass(organism.getClass());
-            getOrganismSet(organism.getClass()).add(organism);
+            retrieveSpecificOrganisms(organism.getClass()).add(organism);
             return true;
         }
     }
     public void removeOrganism(Organism organism) {
-        getOrganismSet(organism.getClass()).remove(organism);
+        retrieveSpecificOrganisms(organism.getClass()).remove(organism);
     }
 
     public List<Organism> retrieveAllOrganisms() {
         List<Organism> organismList = new ArrayList<>();
         for (Class<? extends Organism> clazz : keySet()) {
-            organismList.addAll(getOrganismSet(clazz));
+            organismList.addAll(retrieveSpecificOrganisms(clazz));
         }
         return organismList;
     }

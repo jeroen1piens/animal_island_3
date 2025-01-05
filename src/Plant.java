@@ -3,10 +3,17 @@ public class Plant extends Organism {
 
     @Override
     public void run() {
+        grow();
     }
 
     @Override
     public double getWeight() {
         return weight;
+    }
+
+    public boolean grow() {
+        Plant plant = getIslandSimulator().createPlant();
+        boolean successfull = plant.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
+        return successfull;
     }
 }
