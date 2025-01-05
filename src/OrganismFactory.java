@@ -19,4 +19,13 @@ public class OrganismFactory {
         }
         return list;
     }
+
+    public List<Sheep> createSheep(int count) {
+        List<Sheep> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            Sheep sheep = new Sheep();
+            list.add(sheep);
+        }
+        return list;
+    }
 }

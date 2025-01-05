@@ -8,6 +8,7 @@ public class Tile {
         {
             this.put("Plant", 100);
             this.put("Wolf", 5);
+            this.put("Sheep", 140);
         }
     };
 
@@ -21,7 +22,10 @@ public class Tile {
     public boolean isFull(Organism organism) {
         if (!organismMap.containsKey(organism.getClass())) {
             return false;
-        } else if (organismMap.get(organism.getClass()).size() >= maxCapacityMap.get(organism.getClass().getSimpleName())) {
+        }
+        int occupancy = organismMap.get(organism.getClass()).size();
+        int capacity = maxCapacityMap.get(organism.getClass().getSimpleName());
+        if (occupancy >= capacity) {
             return true;
         } else {
             return false;

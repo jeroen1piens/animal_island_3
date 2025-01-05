@@ -93,6 +93,17 @@ public class IslandSimulator {
         return organismList;
     }
 
+    public List<Organism> retrieveAllOrganisms(int xCoordinate, int yCoordinate) {
+        List<Organism> organismList = new ArrayList<>();
+        Tile tile = getTile(xCoordinate, yCoordinate);
+        for (Class<?> clazz : tile.getOrganismMap().keySet()) {
+            for (Organism organism : tile.getOrganismMap().get(clazz)) {
+                organismList.add(organism);
+            }
+        }
+        return organismList;
+    }
+
     public void scheduleNextTurn(Collection<Organism> organisms, ScheduledExecutorService scheduledExecutorService) {
         for (Organism organism : organisms) {
             scheduledExecutorService.schedule(organism, 10, TimeUnit.MILLISECONDS);
@@ -114,15 +125,16 @@ public class IslandSimulator {
             }
             System.out.println(retrieveAllOrganisms());
             System.out.println("Organisms count: " + retrieveAllOrganisms().size());
-            analytics.setAllOrganismsCollection(retrieveAllOrganisms());
+            analytics.updateAllOrganismsCollection(retrieveAllOrganisms());
             System.out.println(analytics.getOrganismsCountMap());
         }
     }
 
     public List<Organism> createInitialOrganisms() {
         List<Organism> initialOrganisms = new ArrayList<>();
-        initialOrganisms.addAll(organismFactory.createPlants(100));
-        initialOrganisms.addAll(organismFactory.createWolfs(100));
+        initialOrganisms.addAll(organismFactory.createPlants(5000));
+        initialOrganisms.addAll(organismFactory.createWolfs(1000));
+        initialOrganisms.addAll(organismFactory.createSheep(50));
         return initialOrganisms;
     }
 
@@ -131,9 +143,13 @@ public class IslandSimulator {
         int randomX;
         int randomY;
         for (Organism organism : organisms) {
-            randomX = random.nextInt(0, horizontalLengthIsland);
-            randomY = random.nextInt(0, verticalLengthIsland);
-            organism.setInitialPosition(this, randomX, randomY);
+            boolean successFullPositioning = false;
+            while (!successFullPositioning) {
+                randomX = random.nextInt(0, horizontalLengthIsland);
+                randomY = random.nextInt(0, verticalLengthIsland);
+                successFullPositioning = organism.setInitialPosition(this, randomX, randomY);
+            }
+
         }
     }
 
