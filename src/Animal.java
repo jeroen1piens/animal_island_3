@@ -7,11 +7,13 @@ public abstract class Animal extends Organism {
     private double fedLevel = 100;
 
     protected abstract double getRequiredFoodWeight();
+
     public abstract Map<String, Integer> getCatchMap();
 
     private int chooseNextXCoordinate() {
         return ThreadLocalRandom.current().nextInt(getXCoordinate() - 1 >= 0 ? getXCoordinate() - 1 : getXCoordinate(), getXCoordinate() + 1 < getIslandSimulator().getHorizontalLengthIsland() ? getXCoordinate() + 2 : getXCoordinate() + 1);
     }
+
     private int chooseNextYCoordinate() {
         return ThreadLocalRandom.current().nextInt(getYCoordinate() - 1 >= 0 ? getYCoordinate() - 1 : getYCoordinate(), getYCoordinate() + 1 < getIslandSimulator().getVerticalLengthIsland() ? getYCoordinate() + 2 : getYCoordinate() + 1);
     }
@@ -40,7 +42,7 @@ public abstract class Animal extends Organism {
             if (fedLevel >= 100) {
                 return;
             }
-            synchronized(organism) {
+            synchronized (organism) {
                 if (organism.isAlive()) {
                     boolean successFull = catchFood(organism);
                     if (successFull) {
@@ -53,14 +55,14 @@ public abstract class Animal extends Organism {
             }
         }
     }
+
     private boolean catchFood(Organism organism) {
         int catchProbability = getCatchMap().get(organism.getClass().getSimpleName());
         int randomInt = ThreadLocalRandom.current().nextInt(0, 100);
         if (randomInt < catchProbability) {
             organism.die();
             return true;
-            }
-        else {
+        } else {
             return false;
         }
     }
@@ -70,8 +72,25 @@ public abstract class Animal extends Organism {
     }
 
     protected void dieIfUnderfed() {
-        if(fedLevel <= 0) {
+        if (fedLevel <= 0) {
             this.die();
         }
     }
+
+    /*
+    private List<Animal> localisePotentialMates() {
+        List<Organism> list = getIslandSimulator();
+    }
+
+    private Animal chooseMate() {
+
+    }
+
+    public Animal breed() {
+
+    }
+
+
+    public abstract boolean hasMate();
+*/
 }

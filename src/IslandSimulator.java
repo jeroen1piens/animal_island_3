@@ -19,7 +19,7 @@ public class IslandSimulator {
 
     public IslandSimulator() {
         organismFactory = new OrganismFactory();
-        island = createIsland(10,20);
+        island = createIsland(3,3);
         randomlySpreadOrganisms(createInitialOrganisms());
         analytics = new Analytics();
     }
@@ -58,36 +58,20 @@ public class IslandSimulator {
     public boolean addOrganism(Organism organism, int xCoordinate, int yCoordinate) {
         Tile tile = getTile(xCoordinate, yCoordinate);
         synchronized (tile) {
-            if (tile.isFull(organism)) {
-                return false;
-            }
-            else if (tile.getOrganismMap().containsKey(organism.getClass())) {
-                tile.getOrganismMap().get(organism.getClass()).add(organism);
-                return true;
-            }
-            else {
-                tile.getOrganismMap().put(organism.getClass(), ConcurrentHashMap.newKeySet());
-                tile.getOrganismMap().get(organism.getClass()).add(organism);
-                return true;
-            }
+            return tile.addOrganism(organism);
         }
     }
 
     public void removeOrganism(Organism organism, int xCoordinate, int yCoordinate) {
-        Tile tile = island[yCoordinate][xCoordinate];
-        tile.getOrganismMap().get(organism.getClass()).remove(organism);
+        Tile tile = getTile(xCoordinate, yCoordinate);
+        tile.removeOrganism(organism);
     }
 
     public List<Organism> retrieveAllOrganisms() {
         List<Organism> organismList = new ArrayList<>();
         for (int i = 0; i < verticalLengthIsland; i++) {
             for (int j = 0; j < horizontalLengthIsland ; j++) {
-                Tile tile = getTile(j, i);
-                for (Class<?> clazz : tile.getOrganismMap().keySet()) {
-                    for (Organism organism : tile.getOrganismMap().get(clazz)) {
-                        organismList.add(organism);
-                    }
-                }
+                organismList.addAll(retrieveAllOrganisms(j, i));
             }
         }
         return organismList;
@@ -96,11 +80,7 @@ public class IslandSimulator {
     public List<Organism> retrieveAllOrganisms(int xCoordinate, int yCoordinate) {
         List<Organism> organismList = new ArrayList<>();
         Tile tile = getTile(xCoordinate, yCoordinate);
-        for (Class<?> clazz : tile.getOrganismMap().keySet()) {
-            for (Organism organism : tile.getOrganismMap().get(clazz)) {
-                organismList.add(organism);
-            }
-        }
+        organismList.addAll(tile.retrieveAllOrganisms());
         return organismList;
     }
 
@@ -131,11 +111,29 @@ public class IslandSimulator {
     }
 
     public List<Organism> createInitialOrganisms() {
-        List<Organism> initialOrganisms = new ArrayList<>();
-        initialOrganisms.addAll(organismFactory.createPlants(5000));
-        initialOrganisms.addAll(organismFactory.createWolfs(1000));
-        initialOrganisms.addAll(organismFactory.createSheep(50));
-        return initialOrganisms;
+        List<Organism> initialOrganismsList = new ArrayList<>();
+        for (int i = 0; i < InitialOrganisms.PLANT_COUNT; i++) {
+            initialOrganismsList.add(createPlant());
+        }
+        for (int i = 0; i < InitialOrganisms.SHEEP_COUNT; i++) {
+            initialOrganismsList.add(createSheep());
+        }
+        for (int i = 0; i < InitialOrganisms.WOLF_COUNT; i++) {
+            initialOrganismsList.add(createWolf());
+        }
+        return initialOrganismsList;
+    }
+
+    public Plant createPlant() {
+        return organismFactory.createPlant();
+    }
+
+    public Wolf createWolf() {
+        return organismFactory.createWolf();
+    }
+
+    public Sheep createSheep() {
+        return organismFactory.createSheep();
     }
 
     public void randomlySpreadOrganisms(List<Organism> organisms) {

@@ -18,6 +18,9 @@ public class Wolf extends Animal {
     @Override
     public void run() {
         move(3);
+        collectFood();
+        reduceFedLevel();
+        dieIfUnderfed();
         /*
         if (id == 0) {
             runCounter++;
