@@ -17,7 +17,7 @@ public class IslandSimulator {
     public IslandSimulator() {
         organismFactory = new OrganismFactory();
         island = createIsland(3,3);
-        randomlySpreadOrganisms(createInitialOrganisms());
+        randomlySpreadOrganisms(createAllInitialOrganisms());
         analytics = new Analytics();
     }
 
@@ -111,8 +111,13 @@ public class IslandSimulator {
         }
     }
 
-    public List<Organism> createInitialOrganisms() {
+    public List<Organism> createAllInitialOrganisms() {
         List<Organism> initialOrganismsList = new ArrayList<>();
+
+        for (int i = 0; i < InitialOrganisms.BEAR_COUNT; i++) {
+            initialOrganismsList.add(createAnimal(Bear.class, 100));
+        }
+
         for (int i = 0; i < InitialOrganisms.PLANT_COUNT; i++) {
             initialOrganismsList.add(createPlant());
         }
@@ -137,6 +142,10 @@ public class IslandSimulator {
         return organismFactory.createSheep(fedLevel);
     }
 
+    public Animal createAnimal(Class<? extends Animal> clazz, int fedLevel) {
+        return organismFactory.createAnimal(clazz, fedLevel);
+    }
+
     public void randomlySpreadOrganisms(List<Organism> organisms) {
         Random random = new Random();
         int randomX;
@@ -148,9 +157,6 @@ public class IslandSimulator {
                 randomY = random.nextInt(0, verticalLengthIsland);
                 successFullPositioning = organism.setInitialPosition(this, randomX, randomY);
             }
-
         }
     }
-
-
 }

@@ -1,17 +1,20 @@
 import java.util.Map;
 
-public class Wolf extends Animal {
-    private double weight = 50;
-    private double requiredFoodWeight = 8;
-    private Map<String, Integer> catchMap = CatchMaps.WOLFCATCHMAP;
+public class Rabbit extends Animal {
+    private double weight = 2;
+    private double requiredFoodWeight = 0.45;
+    private Map<String, Integer> catchMap = CatchMaps.RABBITCATCHMAP;
     private static final int MIN_BREEDING_FOODLEVEL = 20;
-    private static final int MAX_TILES_PER_TURN = 3;
+    private static final int MAX_TILES_PER_TURN = 2;
 
-
-    public Wolf(double fedLevel) {
+    public Rabbit(double fedLevel) {
         super(fedLevel);
     }
 
+    @Override
+    public double getWeight() {
+        return weight;
+    }
     @Override
     protected double getRequiredFoodWeight() {
         return requiredFoodWeight;
@@ -31,11 +34,4 @@ public class Wolf extends Animal {
     public int getMaxTilesPerTurn() {
         return MAX_TILES_PER_TURN;
     }
-
-    @Override
-    public double getWeight() {
-        return weight;
-    }
-
-
 }

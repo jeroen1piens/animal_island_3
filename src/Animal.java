@@ -30,6 +30,9 @@ public abstract class Animal extends Organism {
 
     public abstract Map<String, Integer> getCatchMap();
 
+    public abstract int getMinBreedingFoodlevel();
+    public abstract int getMaxTilesPerTurn();
+
     private int chooseNextXCoordinate() {
         return ThreadLocalRandom.current().nextInt(getXCoordinate() - 1 >= 0 ? getXCoordinate() - 1 : getXCoordinate(), getXCoordinate() + 1 < getIslandSimulator().getHorizontalLengthIsland() ? getXCoordinate() + 2 : getXCoordinate() + 1);
     }
@@ -119,5 +122,23 @@ public abstract class Animal extends Organism {
         }
         return null;
     }
-    public abstract boolean breed();
+    public boolean breed() {
+        if (getFedLevel() <= getMinBreedingFoodlevel()) {
+            return false;
+        }
+        else {
+            Animal animal = getIslandSimulator().createAnimal(this.getClass(),(int) getFedLevel()-getMinBreedingFoodlevel());
+            boolean successfull = animal.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
+            return successfull;
+        }
+    }
+
+    public void run() {
+        move(getMaxTilesPerTurn());
+        collectFood();
+        reduceFedLevel();
+        dieIfUnderfed();
+        breed();
+    }
+
 }
