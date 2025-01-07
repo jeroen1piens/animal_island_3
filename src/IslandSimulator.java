@@ -117,10 +117,10 @@ public class IslandSimulator {
             initialOrganismsList.add(createPlant());
         }
         for (int i = 0; i < InitialOrganisms.SHEEP_COUNT; i++) {
-            initialOrganismsList.add(createSheep());
+            initialOrganismsList.add(createSheep(100));
         }
         for (int i = 0; i < InitialOrganisms.WOLF_COUNT; i++) {
-            initialOrganismsList.add(createWolf());
+            initialOrganismsList.add(createWolf(100));
         }
         return initialOrganismsList;
     }
@@ -129,12 +129,12 @@ public class IslandSimulator {
         return organismFactory.createPlant();
     }
 
-    public Wolf createWolf() {
-        return organismFactory.createWolf();
+    public Wolf createWolf(double fedLevel) {
+        return organismFactory.createWolf(fedLevel);
     }
 
-    public Sheep createSheep() {
-        return organismFactory.createSheep();
+    public Sheep createSheep(double fedLevel) {
+        return organismFactory.createSheep(fedLevel);
     }
 
     public void randomlySpreadOrganisms(List<Organism> organisms) {

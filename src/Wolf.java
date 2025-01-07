@@ -9,7 +9,8 @@ public class Wolf extends Animal {
     private Map<String, Integer> catchMap = CatchMaps.WOLFCATCHMAP;
 
 
-    public Wolf() {
+    public Wolf(double fedLevel) {
+        super(fedLevel);
         //id = count;
         //count++;
     }
@@ -21,6 +22,7 @@ public class Wolf extends Animal {
         collectFood();
         reduceFedLevel();
         dieIfUnderfed();
+        breed();
         /*
         if (id == 0) {
             runCounter++;
@@ -46,8 +48,13 @@ public class Wolf extends Animal {
 
     @Override
     public boolean breed() {
-        Wolf wolf = getIslandSimulator().createWolf();
-        boolean successfull = wolf.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
-        return successfull;
+        if (getFedLevel() <= 20) {
+            return false;
+        }
+        else {
+            Wolf wolf = getIslandSimulator().createWolf(getFedLevel()-20);
+            boolean successfull = wolf.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
+            return successfull;
+        }
     }
 }

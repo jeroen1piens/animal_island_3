@@ -6,10 +6,12 @@ public class OrganismFactory {
     public Plant createPlant() {
         return new Plant();
     }
-    public Wolf createWolf() {
-        return new Wolf();
+    public Wolf createWolf(double fedLevel) {
+        return new Wolf(fedLevel);
     }
-    public Sheep createSheep() {
-        return new Sheep();
+    public Sheep createSheep(double fedLevel) {
+        return new Sheep(fedLevel);
     }
+
+
 }

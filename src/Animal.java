@@ -4,13 +4,25 @@ import java.util.stream.Collectors;
 
 public abstract class Animal extends Organism {
 
+
+
     private double fedLevel = 100;
     private volatile boolean hasMate;
+
+    public Animal() {
+
+    }
+
+    public Animal (double fedLevel) {
+        this.fedLevel = fedLevel;
+    }
 
     public boolean isHasMate() {
         return hasMate;
     }
-
+    public double getFedLevel() {
+        return fedLevel;
+    }
     public void setHasMate(boolean hasMate) {
         this.hasMate = hasMate;
     }
