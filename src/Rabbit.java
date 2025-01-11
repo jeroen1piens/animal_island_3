@@ -1,37 +1,12 @@
 import java.util.Map;
 
 public class Rabbit extends Animal {
-    private double weight = 2;
-    private double requiredFoodWeight = 0.45;
-    private Map<String, Integer> catchMap = CatchMaps.RABBITCATCHMAP;
-    private static final int MIN_BREEDING_FOODLEVEL = 20;
-    private static final int MAX_TILES_PER_TURN = 2;
-
     public Rabbit(double fedLevel) {
         super(fedLevel);
-    }
-
-    @Override
-    public double getWeight() {
-        return weight;
-    }
-    @Override
-    protected double getRequiredFoodWeight() {
-        return requiredFoodWeight;
-    }
-
-    @Override
-    public Map<String, Integer> getCatchMap() {
-        return catchMap;
-    }
-
-    @Override
-    public int getMinBreedingFoodlevel() {
-        return MIN_BREEDING_FOODLEVEL;
-    }
-
-    @Override
-    public int getMaxTilesPerTurn() {
-        return MAX_TILES_PER_TURN;
+        setWeight(2);
+        setRequiredFoodWeight(0.45);
+        setCatchMap(CatchMaps.RABBITCATCHMAP);
+        setMinBreedingFoodlevel(20);
+        setMaxTilesPerTurn(2);
     }
 }

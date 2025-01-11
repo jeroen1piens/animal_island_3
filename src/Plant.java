@@ -21,7 +21,10 @@ public class Plant extends Organism {
         int randomNumber = ThreadLocalRandom.current().nextInt(0, 100);
         if (randomNumber < PROCREATE_PROBABILITY*100) {
             Plant plant = getIslandSimulator().createPlant();
-            boolean successfull = plant.setInitialPosition(getIslandSimulator(), chooseNextXCoordinate(), chooseNextYCoordinate());
+            int nextXCoordinate = chooseNextXCoordinate();
+            int nextYCoordinate = chooseNextYCoordinate();
+            IslandSimulator islandSimulator = getIslandSimulator();
+            boolean successfull = plant.setInitialPosition(islandSimulator, nextXCoordinate, nextYCoordinate);
             return successfull;
         }
         return false;
@@ -29,6 +32,9 @@ public class Plant extends Organism {
 
     private int chooseNextXCoordinate() {
         int number = ThreadLocalRandom.current().nextInt(0, 100);
+        if (getIslandSimulator().getHorizontalLengthIsland() == 1) {
+            return getXCoordinate();
+        }
         if (number < Math.sqrt(STAY_LOCAL_PROBABILITY)*100) {
             return getXCoordinate();
         }
@@ -43,6 +49,9 @@ public class Plant extends Organism {
 
     private int chooseNextYCoordinate() {
         int number = ThreadLocalRandom.current().nextInt(0, 100);
+        if (getIslandSimulator().getVerticalLengthIsland() == 1) {
+            return getYCoordinate();
+        }
         if (number < Math.sqrt(STAY_LOCAL_PROBABILITY)*100) {
             return getYCoordinate();
         }

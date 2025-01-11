@@ -1,14 +1,24 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Tile {
-    private Map<Class<? extends Organism>, Set<Organism>> organismMap = new ConcurrentHashMap<>();
+    private volatile Map<Class<? extends Organism>, Set<Organism>> organismMap = new ConcurrentHashMap<>();
     private static final Map<String, Integer> maxCapacityMap = new ConcurrentHashMap<>() {
         {
+            this.put("Bear", 5);
+            this.put("Boa", 30);
+            this.put("Boar", 50);
+            this.put("Buffalo", 10);
+            this.put("Caterpillar", 1000);
+            this.put("Deer", 20);
+            this.put("Duck", 150);
+            this.put("Eagle", 20);
+            this.put("Fox", 30);
+            this.put("Goat", 140);
+            this.put("Horse", 20);
+            this.put("Mouse", 500);
             this.put("Plant", 200);
+            this.put("Rabbit", 150);
             this.put("Wolf", 5);
             this.put("Sheep", 140);
         }
@@ -34,7 +44,9 @@ public class Tile {
         return organismMap.keySet();
     }
     public Set<Organism> retrieveSpecificOrganisms(Class<? extends Organism> clazz) {
-        return organismMap.get(clazz);
+        Set<Organism> set = new HashSet<>();
+        set.addAll(organismMap.get(clazz));
+        return set;
     }
 
     private void addOrganismClass(Class<? extends Organism> clazz) {
@@ -46,23 +58,23 @@ public class Tile {
             return false;
         }
         else if (contains(organism.getClass())) {
-            retrieveSpecificOrganisms(organism.getClass()).add(organism);
+            organismMap.get(organism.getClass()).add(organism);
             return true;
         }
         else {
             addOrganismClass(organism.getClass());
-            retrieveSpecificOrganisms(organism.getClass()).add(organism);
+            organismMap.get(organism.getClass()).add(organism);
             return true;
         }
     }
     public void removeOrganism(Organism organism) {
-        retrieveSpecificOrganisms(organism.getClass()).remove(organism);
+        organismMap.get(organism.getClass()).remove(organism);
     }
 
     public List<Organism> retrieveAllOrganisms() {
         List<Organism> organismList = new ArrayList<>();
         for (Class<? extends Organism> clazz : keySet()) {
-            organismList.addAll(retrieveSpecificOrganisms(clazz));
+            organismList.addAll(organismMap.get(clazz));
         }
         return organismList;
     }

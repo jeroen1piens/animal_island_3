@@ -3,11 +3,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public abstract class Animal extends Organism {
-
-
-
     private double fedLevel = 100;
     private volatile boolean hasMate;
+    private double weight;
+    private double requiredFoodWeight;
+    private Map<String, Integer> catchMap;
+    private int minBreedingFoodlevel;
+    private int maxTilesPerTurn;
+    private volatile boolean newBorn = true;
 
     public Animal() {
 
@@ -23,15 +26,51 @@ public abstract class Animal extends Organism {
     public double getFedLevel() {
         return fedLevel;
     }
+
+    public double getWeight() {
+        return weight;
+    }
+    protected double getRequiredFoodWeight() {
+        return requiredFoodWeight;
+    };
+
+    public Map<String, Integer> getCatchMap() {
+        return catchMap;
+    }
+
+    public int getMinBreedingFoodlevel() {
+        return minBreedingFoodlevel;
+    }
+    public int getMaxTilesPerTurn() {
+        return maxTilesPerTurn;
+    }
+    public boolean isNewBorn() {
+        return newBorn;
+    }
+
     public void setHasMate(boolean hasMate) {
         this.hasMate = hasMate;
     }
-    protected abstract double getRequiredFoodWeight();
 
-    public abstract Map<String, Integer> getCatchMap();
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
 
-    public abstract int getMinBreedingFoodlevel();
-    public abstract int getMaxTilesPerTurn();
+    public void setRequiredFoodWeight(double requiredFoodWeight) {
+        this.requiredFoodWeight = requiredFoodWeight;
+    }
+
+    public void setCatchMap(Map<String, Integer> catchMap) {
+        this.catchMap = catchMap;
+    }
+
+    public void setMinBreedingFoodlevel(int minBreedingFoodlevel) {
+        this.minBreedingFoodlevel = minBreedingFoodlevel;
+    }
+
+    public void setMaxTilesPerTurn(int maxTilesPerTurn) {
+        this.maxTilesPerTurn = maxTilesPerTurn;
+    }
 
     private int chooseNextXCoordinate() {
         return ThreadLocalRandom.current().nextInt(getXCoordinate() - 1 >= 0 ? getXCoordinate() - 1 : getXCoordinate(), getXCoordinate() + 1 < getIslandSimulator().getHorizontalLengthIsland() ? getXCoordinate() + 2 : getXCoordinate() + 1);
@@ -54,10 +93,11 @@ public abstract class Animal extends Organism {
 
     private List<Organism> localiseAvailableFood() {
         List<Organism> allOrganismList = getIslandSimulator().retrieveAllOrganisms(getXCoordinate(), getYCoordinate());
-        Collections.shuffle(allOrganismList);
-        return allOrganismList.stream()
+        Collections.shuffle(allOrganismList, ThreadLocalRandom.current());
+        List<Organism> availableFood = allOrganismList.stream()
                 .filter(organism -> getCatchMap().containsKey(organism.getClass().getSimpleName()))
                 .collect(Collectors.toCollection(ArrayList::new));
+        return availableFood;
     }
 
     public void collectFood() {
@@ -106,6 +146,8 @@ public abstract class Animal extends Organism {
         set.remove(this);
         return set.stream()
                 .map(organism -> (Animal) organism)
+                .filter(animal -> !animal.isNewBorn())
+                .filter(animal -> animal.isAlive())
                 .filter(animal -> !animal.isHasMate())
                 .collect(Collectors.toCollection(HashSet::new));
     }
@@ -126,19 +168,41 @@ public abstract class Animal extends Organism {
         if (getFedLevel() <= getMinBreedingFoodlevel()) {
             return false;
         }
+        if (isHasMate()) {
+            return true;
+        }
         else {
-            Animal animal = getIslandSimulator().createAnimal(this.getClass(),(int) getFedLevel()-getMinBreedingFoodlevel());
-            boolean successfull = animal.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
-            return successfull;
+            Animal mate = chooseMate();
+            if (mate != null) {
+                Animal animal = getIslandSimulator().createAnimal(this.getClass(),(int) getFedLevel()-getMinBreedingFoodlevel());
+                boolean successfull = animal.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
+                return successfull;
+            }
+            else {
+                return false;
+            }
         }
     }
 
     public void run() {
-        move(getMaxTilesPerTurn());
-        collectFood();
-        reduceFedLevel();
-        dieIfUnderfed();
-        breed();
+        try {
+            move(getMaxTilesPerTurn());
+            collectFood();
+            reduceFedLevel();
+            dieIfUnderfed();
+            if (isAlive()) {
+                breed();
+            }
+        } catch (Exception e) {
+            System.out.println(String.format("ERROR: Something went wrong with Animal: %s", this));
+            System.out.println(e);
+        }
+        //System.out.println(this.getClass().getSimpleName() + " " + this.hashCode() + ": X=" + this.getXCoordinate() + " Y=" + this.getYCoordinate() + " Fedlevel=" + this.getFedLevel());
+    }
+
+    public void updateForNextTurn() {
+        hasMate = false;
+        newBorn = false;
     }
 
 }

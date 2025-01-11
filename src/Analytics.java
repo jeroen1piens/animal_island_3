@@ -75,7 +75,6 @@ public class Analytics {
 
     public Map<String, Integer> getOrganismsCountMap() {
         Map<String, Integer> organismsCountMap = new HashMap<>();
-        organismsCountMap.put("Total Organisms", allOrganismsCollection.size());
         organismsCountMap.put("Bear", allBearsSet.size());
         organismsCountMap.put("Boa", allBoasSet.size());
         organismsCountMap.put("Boar", allBoarsSet.size());
@@ -88,10 +87,10 @@ public class Analytics {
         organismsCountMap.put("Goat", allGoatsSet.size());
         organismsCountMap.put("Horse", allHorsesSet.size());
         organismsCountMap.put("Mouse", allMiceSet.size());
-        organismsCountMap.put("Plants", allPlantsSet.size());
+        organismsCountMap.put("Plant", allPlantsSet.size());
         organismsCountMap.put("Rabbit", allRabbitsSet.size());
         organismsCountMap.put("Sheep", allSheepSet.size());
-        organismsCountMap.put("Wolfs", allWolfsSet.size());
+        organismsCountMap.put("Wolf", allWolfsSet.size());
         return organismsCountMap;
     }
 }

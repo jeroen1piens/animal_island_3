@@ -1,8 +1,5 @@
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class IslandSimulator {
 
@@ -16,14 +13,14 @@ public class IslandSimulator {
 
     public IslandSimulator() {
         organismFactory = new OrganismFactory();
-        island = createIsland(3,3);
+        island = createIsland(10, 10);
         randomlySpreadOrganisms(createAllInitialOrganisms());
         analytics = new Analytics();
     }
 
     public static void main(String[] args) {
         IslandSimulator islandSimulator = new IslandSimulator();
-        islandSimulator.simulate(100);
+        islandSimulator.simulateInOneLoop(20);
     }
 
     public Tile[][] createIsland(int horizontalLengthIsland, int verticalLengthIsland) {
@@ -40,8 +37,12 @@ public class IslandSimulator {
     }
 
     public Tile getTile(int xCoordinate, int yCoordinate) {
-
-        return island[yCoordinate][xCoordinate];
+        if(xCoordinate >= 0 && xCoordinate < horizontalLengthIsland && yCoordinate >= 0 && yCoordinate < verticalLengthIsland) {
+            return island[yCoordinate][xCoordinate];
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public int getHorizontalLengthIsland() {
@@ -71,7 +72,7 @@ public class IslandSimulator {
     public List<Organism> retrieveAllOrganisms() {
         List<Organism> organismList = new ArrayList<>();
         for (int i = 0; i < verticalLengthIsland; i++) {
-            for (int j = 0; j < horizontalLengthIsland ; j++) {
+            for (int j = 0; j < horizontalLengthIsland; j++) {
                 organismList.addAll(retrieveAllOrganisms(j, i));
             }
         }
@@ -91,24 +92,51 @@ public class IslandSimulator {
         }
     }
 
+    public void simulateInOneLoop(int turns) {
+        for (int i = 0; i < turns; i++) {
+            for (Organism organism : retrieveAllOrganisms()) {
+                organism.run();
+            }
+            //System.out.println(retrieveAllOrganisms());
+            System.out.println("Organisms count: " + retrieveAllOrganisms().size());
+            analytics.updateAllOrganismsCollection(retrieveAllOrganisms());
+            System.out.println("Plant: " + analytics.getOrganismsCountMap().get("Plant"));
+            System.out.println("Sheep: " + analytics.getOrganismsCountMap().get("Sheep"));
+            System.out.println("Wolf: " + analytics.getOrganismsCountMap().get("Wolf"));
+            System.out.println("Bear: " + analytics.getOrganismsCountMap().get("Bear"));
+            notifyForNextTurn();
+        }
+
+    }
+
     public void simulate(int turns) {
         for (int i = 0; i < turns; i++) {
             scheduledExecutorService = Executors.newScheduledThreadPool(3);
             scheduleNextTurn(retrieveAllOrganisms(), scheduledExecutorService);
             scheduledExecutorService.shutdown();
-            while(!scheduledExecutorService.isTerminated()) {
-                try{
+            while (!scheduledExecutorService.isTerminated()) {
+                try {
                     Thread.sleep(250);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println(retrieveAllOrganisms());
             System.out.println("Organisms count: " + retrieveAllOrganisms().size());
             analytics.updateAllOrganismsCollection(retrieveAllOrganisms());
-            System.out.println(analytics.getOrganismsCountMap());
+            System.out.println("Plant: " + analytics.getOrganismsCountMap().get("Plant"));
+            System.out.println("Sheep: " + analytics.getOrganismsCountMap().get("Sheep"));
+            System.out.println("Wolf: " + analytics.getOrganismsCountMap().get("Wolf"));
+            System.out.println("Bear: " + analytics.getOrganismsCountMap().get("Bear"));
+
+            notifyForNextTurn();
         }
+    }
+
+    private void notifyForNextTurn() {
+        retrieveAllOrganisms().stream()
+                .filter(organism -> organism instanceof Animal)
+                .map(organism -> (Animal) organism)
+                .forEach(animal -> animal.updateForNextTurn());
     }
 
     public List<Organism> createAllInitialOrganisms() {
