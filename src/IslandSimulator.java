@@ -13,14 +13,14 @@ public class IslandSimulator {
 
     public IslandSimulator() {
         organismFactory = new OrganismFactory();
-        island = createIsland(10, 10);
+        island = createIsland(20, 20);
         randomlySpreadOrganisms(createAllInitialOrganisms());
         analytics = new Analytics();
     }
 
     public static void main(String[] args) {
         IslandSimulator islandSimulator = new IslandSimulator();
-        islandSimulator.simulateInOneLoop(20);
+        islandSimulator.simulate(100);
     }
 
     public Tile[][] createIsland(int horizontalLengthIsland, int verticalLengthIsland) {
@@ -41,7 +41,7 @@ public class IslandSimulator {
             return island[yCoordinate][xCoordinate];
         }
         else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("No tile exists with coordinates X=" + xCoordinate + ", Y=" + yCoordinate + ". The horizontal length of the island is = " + getHorizontalLengthIsland() + ", the vertical length of the island is = " + getVerticalLengthIsland());
         }
     }
 
@@ -56,13 +56,23 @@ public class IslandSimulator {
     public boolean addOrganism(Organism organism, int xCoordinate, int yCoordinate) {
         Tile tile = getTile(xCoordinate, yCoordinate);
         synchronized (tile) {
-            return tile.addOrganism(organism);
+            boolean successful = tile.addOrganism(organism);
+            return successful;
         }
     }
 
     public void removeOrganism(Organism organism, int xCoordinate, int yCoordinate) {
         Tile tile = getTile(xCoordinate, yCoordinate);
         tile.removeOrganism(organism);
+    }
+
+    public boolean validateCoordinates(Organism organism) {
+        if (getTile(organism.getXCoordinate(), organism.getYCoordinate()).contains(organism)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public Set<Organism> retrieveSpecificOrganisms(Class<? extends Organism> clazz, int xCoordinate, int yCoordinate) {

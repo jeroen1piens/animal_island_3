@@ -68,7 +68,12 @@ public class Tile {
         }
     }
     public void removeOrganism(Organism organism) {
-        organismMap.get(organism.getClass()).remove(organism);
+        if (organismMap.get(organism.getClass()).contains(organism)) {
+            organismMap.get(organism.getClass()).remove(organism);
+        }
+        else {
+            throw new NoSuchElementException("Organism to be removed not present in the organismMap of the called tile!!!" );
+        }
     }
 
     public List<Organism> retrieveAllOrganisms() {
@@ -81,5 +86,13 @@ public class Tile {
 
     public boolean contains(Class<? extends Organism> clazz) {
         return organismMap.containsKey(clazz);
+    }
+    public boolean contains(Organism organism) {
+        if (contains(organism.getClass())) {
+            return organismMap.get(organism.getClass()).contains(organism);
+        }
+        else {
+            return false;
+        }
     }
 }

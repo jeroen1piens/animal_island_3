@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Plant extends Organism {
@@ -9,7 +7,11 @@ public class Plant extends Organism {
 
     @Override
     public void run() {
-        grow();
+        synchronized (this) {
+            if (isAlive()) {
+                grow();
+            }
+        }
     }
 
     @Override
@@ -58,11 +60,9 @@ public class Plant extends Organism {
         else {
             int newYCoordinate = getYCoordinate();
             while(newYCoordinate == getYCoordinate()) {
-                newYCoordinate = ThreadLocalRandom.current().nextInt(getYCoordinate() - 1 >= 0 ? getYCoordinate() - 1 : getYCoordinate(), getYCoordinate() + 1 < getIslandSimulator().getVerticalLengthIsland() ? getYCoordinate() + 2 : getYCoordinate() + 1);
+                newYCoordinate = ThreadLocalRandom.current().nextInt(getYCoordinate() > 0 ? getYCoordinate() - 1 : getYCoordinate(), getYCoordinate() < getIslandSimulator().getVerticalLengthIsland() - 1 ? getYCoordinate() + 2 : getYCoordinate() + 1);
             }
             return newYCoordinate;
         }
     }
-
-
 }

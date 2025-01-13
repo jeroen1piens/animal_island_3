@@ -86,7 +86,7 @@ public abstract class Animal extends Organism {
             int nextYCoordinate = chooseNextYCoordinate();
             boolean successfull = changePosition(nextXCoordinate, nextYCoordinate);
             if (!successfull) {
-                tileCount--;
+                i--;
             }
         }
     }
@@ -134,13 +134,6 @@ public abstract class Animal extends Organism {
         fedLevel -= 20;
     }
 
-    protected void dieIfUnderfed() {
-        if (fedLevel <= 0) {
-            this.die();
-        }
-    }
-
-
     private Set<Animal> localisePotentialMates() {
         Set<Organism> set = getIslandSimulator().retrieveSpecificOrganisms(this.getClass(), getXCoordinate(), getYCoordinate());
         set.remove(this);
@@ -186,18 +179,21 @@ public abstract class Animal extends Organism {
 
     public void run() {
         try {
-            move(getMaxTilesPerTurn());
-            collectFood();
-            reduceFedLevel();
-            dieIfUnderfed();
-            if (isAlive()) {
-                breed();
+            synchronized (this) {
+                if (isAlive()) {
+                    move(getMaxTilesPerTurn());
+                    collectFood();
+                    reduceFedLevel();
+                    if (fedLevel <= 0) {
+                        this.die();
+                    }
+                    breed();
+                }
             }
         } catch (Exception e) {
             System.out.println(String.format("ERROR: Something went wrong with Animal: %s", this));
             System.out.println(e);
         }
-        //System.out.println(this.getClass().getSimpleName() + " " + this.hashCode() + ": X=" + this.getXCoordinate() + " Y=" + this.getYCoordinate() + " Fedlevel=" + this.getFedLevel());
     }
 
     public void updateForNextTurn() {
