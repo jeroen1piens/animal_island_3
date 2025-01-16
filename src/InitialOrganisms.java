@@ -9,7 +9,7 @@ public class InitialOrganisms {
     public static final int RABBIT_COUNT = 0;
     public static final int MOUSE_COUNT = 0;
     public static final int GOAT_COUNT = 0;
-    public static final int SHEEP_COUNT = 150;
+    public static final int SHEEP_COUNT = 500;
     public static final int BOAR_COUNT = 0;
     public static final int BUFFALO_COUNT = 0;
     public static final int DUCK_COUNT = 0;

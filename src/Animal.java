@@ -147,7 +147,7 @@ public abstract class Animal extends Organism {
 
     protected Animal chooseMate() {
         for (Animal animal : localisePotentialMates()) {
-            synchronized (animal) {
+            synchronized (Animal.class) {
                 if(!animal.isHasMate()) {
                     hasMate = true;
                     animal.setHasMate(true);
@@ -166,7 +166,7 @@ public abstract class Animal extends Organism {
         }
         else {
             Animal mate = chooseMate();
-            if (mate != null) {
+            if (mate != null && mate.isAlive()) {
                 Animal animal = getIslandSimulator().createAnimal(this.getClass(),(int) getFedLevel()-getMinBreedingFoodlevel());
                 boolean successfull = animal.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
                 return successfull;
