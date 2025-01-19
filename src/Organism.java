@@ -7,6 +7,10 @@ public abstract class Organism implements Runnable {
     private int yCoordinate;
     private volatile boolean alive = true;
 
+    public Organism() {
+        islandSimulator.register(this);
+    }
+
     public IslandSimulator getIslandSimulator() {
         return islandSimulator;
     }

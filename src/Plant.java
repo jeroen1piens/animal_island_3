@@ -4,6 +4,7 @@ public class Plant extends Organism {
     private double weight = 1;
     private static final double STAY_LOCAL_PROBABILITY = 0.90;
     private static final double PROCREATE_PROBABILITY = 0.70;
+    private OrganismFactory organismFactory = new OrganismFactory();
 
     @Override
     public void run() {
@@ -22,7 +23,7 @@ public class Plant extends Organism {
     public boolean grow() {
         int randomNumber = ThreadLocalRandom.current().nextInt(0, 100);
         if (randomNumber < PROCREATE_PROBABILITY*100) {
-            Plant plant = getIslandSimulator().createPlant();
+            Plant plant = organismFactory.createPlant();
             int nextXCoordinate = chooseNextXCoordinate();
             int nextYCoordinate = chooseNextYCoordinate();
             IslandSimulator islandSimulator = getIslandSimulator();

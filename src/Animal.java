@@ -2,7 +2,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public abstract class Animal extends Organism {
+public abstract class Animal extends Organism implements TurnObserver {
     private double fedLevel = 100;
     private volatile boolean hasMate;
     private double weight;
@@ -11,6 +11,7 @@ public abstract class Animal extends Organism {
     private int minBreedingFoodlevel;
     private int maxTilesPerTurn;
     private volatile boolean newBorn = true;
+    private OrganismFactory organismFactory = new OrganismFactory();
 
     public Animal() {
 
@@ -92,7 +93,7 @@ public abstract class Animal extends Organism {
     }
 
     private List<Organism> localiseAvailableFood() {
-        List<Organism> allOrganismList = getIslandSimulator().retrieveAllOrganisms(getXCoordinate(), getYCoordinate());
+        List<Organism> allOrganismList = getIslandSimulator().retrieveAllTileOrganisms(getXCoordinate(), getYCoordinate());
         Collections.shuffle(allOrganismList, ThreadLocalRandom.current());
         List<Organism> availableFood = allOrganismList.stream()
                 .filter(organism -> getCatchMap().containsKey(organism.getClass().getSimpleName()))
@@ -167,7 +168,7 @@ public abstract class Animal extends Organism {
         else {
             Animal mate = chooseMate();
             if (mate != null && mate.isAlive()) {
-                Animal animal = getIslandSimulator().createAnimal(this.getClass(),(int) getFedLevel()-getMinBreedingFoodlevel());
+                Animal animal = organismFactory.createAnimal(this.getClass(),(int) getFedLevel()-getMinBreedingFoodlevel());
                 boolean successfull = animal.setInitialPosition(getIslandSimulator(), getXCoordinate(), getYCoordinate());
                 return successfull;
             }
