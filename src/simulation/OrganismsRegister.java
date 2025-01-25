@@ -1,22 +1,36 @@
 package simulation;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public interface OrganismsRegister {
-    public void registerOrganism(Organism organism);
-    public void registerObserver(OrganismRegisterObserver observer);
-    public void removeObserver(OrganismRegisterObserver observer);
-    public void notifyObservers();
+public class OrganismsRegister {
 
-    public int getCurrentTurn();
-    public Set<Organism> getAliveOrganisms(int turn);
-    public Set<Organism> getAliveOrganisms();
+    private int turn;
+    private Set<Organism> organismSet = new HashSet<>();
 
-    public Set<Organism> getNewBornOrganisms(int turn);
-    public Set<Organism> getNewBornOrganisms();
-    public Set<Organism> getDeceasedAnimals(int turn);
-    public Set<Organism> getDeceasedAnimals();
+    public OrganismsRegister(int turn) {
+        this.turn = turn;
+    }
 
+    public void registerOrganisms(Set<Organism> organisms) {
+        organismSet.addAll(organisms);
+    }
 
+    public int getTurn() {
+        return turn;
+    }
+
+    public Set<Organism> getAliveOrganisms() {
+        return organismSet.stream()
+                .filter(organism -> organism.isAlive())
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Organism> getDeceasedAnimals() {
+        return organismSet.stream()
+                .filter(organism -> !organism.isAlive())
+                .collect(Collectors.toSet());
+    }
 
 }

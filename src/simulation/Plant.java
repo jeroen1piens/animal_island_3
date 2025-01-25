@@ -24,6 +24,11 @@ public class Plant extends Organism {
         return weight;
     }
 
+    @Override
+    public void prepareForNextTurn() {
+        newBorn = false;
+    }
+
     public boolean grow() {
         int randomNumber = ThreadLocalRandom.current().nextInt(0, 100);
         if (randomNumber < PROCREATE_PROBABILITY*100) {
@@ -70,4 +75,6 @@ public class Plant extends Organism {
             return newYCoordinate;
         }
     }
+
+
 }

@@ -1,5 +1,4 @@
 package controller;
-import viewer.SettingsMenuView;
 import viewer.StartMenuView;
 import simulation.IslandSimulator;
 
@@ -38,6 +37,8 @@ public class StartMenuController {
     }
 
     public void startSimulation() {
+        AnalysisController analysisController = new AnalysisController(islandSimulator);
+        islandSimulator.setAnalysisController(analysisController);
         islandSimulator.simulate();
         chooseOption();
     }

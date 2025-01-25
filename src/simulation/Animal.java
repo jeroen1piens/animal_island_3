@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public abstract class Animal extends Organism implements TurnObserver {
+public abstract class Animal extends Organism {
     private double fedLevel = 100;
     private volatile boolean hasMate;
     private double weight;
@@ -12,7 +12,7 @@ public abstract class Animal extends Organism implements TurnObserver {
     private Map<String, Integer> catchMap;
     private int minBreedingFoodlevel;
     private int maxTilesPerTurn;
-    private volatile boolean newBorn = true;
+
     private OrganismFactory organismFactory = new OrganismFactory();
 
     public Animal() {
@@ -199,7 +199,8 @@ public abstract class Animal extends Organism implements TurnObserver {
         }
     }
 
-    public void updateForNextTurn() {
+    @Override
+    public void prepareForNextTurn() {
         hasMate = false;
         newBorn = false;
     }

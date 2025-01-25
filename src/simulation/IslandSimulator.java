@@ -1,5 +1,7 @@
 package simulation;
 
+import controller.AnalysisController;
+
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -7,22 +9,21 @@ import java.util.stream.Collectors;
 public class IslandSimulator {
 
     private Tile[][] island;
-    private int turn;
+    private int turn = 0;
     private int horizontalLengthIsland;
     private int verticalLengthIsland;
     private OrganismFactory organismFactory;
     private ScheduledExecutorService scheduledExecutorService;
     private Analytics analytics;
-    private Set<TurnObserver> turnObservers = new HashSet<>();
 
-    private AllOrganismsRegister allOrganismsRegister = new AllOrganismsRegister();
+    private AnalysisController analysisController;
 
     public IslandSimulator() {
         organismFactory = new OrganismFactory();
         island = createIsland(StartSettings.getHorizontalLengthIsland(), StartSettings.getVerticallengthIsland());
         randomlySpreadOrganisms(createAllInitialOrganisms());
         analytics = new Analytics();
-        turn = 1;
+        turn = 0;
     }
 
     public Tile[][] createIsland(int horizontalLengthIsland, int verticalLengthIsland) {
@@ -55,9 +56,10 @@ public class IslandSimulator {
         return verticalLengthIsland;
     }
 
-    public AllOrganismsRegister getAllOrganismsRegister() {
-        return allOrganismsRegister;
+    public void setAnalysisController(AnalysisController analysisController) {
+        this.analysisController = analysisController;
     }
+
 
     public boolean addOrganism(Organism organism, int xCoordinate, int yCoordinate) {
         Tile tile = getTile(xCoordinate, yCoordinate);
@@ -120,16 +122,18 @@ public class IslandSimulator {
             System.out.println("Sheep: " + analytics.getOrganismsCountMap().get("Sheep"));
             System.out.println("Wolf: " + analytics.getOrganismsCountMap().get("Wolf"));
             System.out.println("Bear: " + analytics.getOrganismsCountMap().get("Bear"));
-            notifyForNextTurn();
+
         }
 
     }
 
     public void simulate() {
         for (int i = 0; i < StartSettings.getTurnCount(); i++) {
-            notifyForNextTurn();
+            turn++;
             scheduledExecutorService = Executors.newScheduledThreadPool(3);
-            scheduleNextTurn(retrieveAllIslandOrganisms(), scheduledExecutorService);
+            Set<Organism> startTurnOrganisms = retrieveAllIslandOrganisms().stream().collect(Collectors.toSet());
+            prepareForNextTurn(startTurnOrganisms);
+            scheduleNextTurn(startTurnOrganisms, scheduledExecutorService);
             scheduledExecutorService.shutdown();
             while (!scheduledExecutorService.isTerminated()) {
                 try {
@@ -137,7 +141,9 @@ public class IslandSimulator {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                analysisController.updateCurrentOrganisms(turn, startTurnOrganisms);
             }
+            /*
             System.out.println("Turn: " + turn);
             System.out.println("Organisms count: " + retrieveAllIslandOrganisms().size());
             analytics.updateAllOrganismsCollection(retrieveAllIslandOrganisms());
@@ -158,25 +164,13 @@ public class IslandSimulator {
             System.out.println("Sheep: " + analytics.getOrganismsCountMap().get("Sheep"));
             System.out.println("Wolf: " + analytics.getOrganismsCountMap().get("Wolf"));
             turn++;
+            */
         }
     }
 
-    public void register(Organism organism) {
-        allOrganismsRegister.registerOrganism(organism);
-    }
-
-    private void updateTurnObservers() {
-        Set<Animal> currentAnimals = retrieveAllIslandOrganisms().stream()
-                .filter(organism -> organism instanceof Animal)
-                .map(organism -> (Animal) organism).collect(Collectors.toSet());
-        turnObservers.addAll(currentAnimals);
-        turnObservers.add(allOrganismsRegister);
-    }
-
-    private void notifyForNextTurn() {
-        updateTurnObservers();
-        for (TurnObserver observer : turnObservers) {
-            observer.updateForNextTurn();
+    private void prepareForNextTurn(Collection<Organism> organisms) {
+        for (Organism organism : organisms) {
+            organism.prepareForNextTurn();
         }
     }
 

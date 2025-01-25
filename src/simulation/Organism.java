@@ -9,6 +9,7 @@ public abstract class Organism implements Runnable {
     private int xCoordinate;
     private int yCoordinate;
     private volatile boolean alive = true;
+    protected volatile boolean newBorn = true;
 
     public Organism() {
     }
@@ -30,6 +31,9 @@ public abstract class Organism implements Runnable {
     public boolean isAlive() {
         return alive;
     }
+    public boolean isNewBorn() {
+        return newBorn;
+    }
 
     public void die() {
         alive = false;
@@ -48,7 +52,6 @@ public abstract class Organism implements Runnable {
             if (!getIslandSimulator().validateCoordinates(this)) {
                 throw new NoSuchElementException("There is an issue with the coordinates of organism " + this.toString() + " at setting the initial position!");
             }
-            islandSimulator.register(this);
             return true;
         }
         return false;
@@ -79,4 +82,7 @@ public abstract class Organism implements Runnable {
             return false;
         }
     }
+
+    public abstract void prepareForNextTurn();
 }
+
