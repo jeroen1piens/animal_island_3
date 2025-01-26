@@ -9,7 +9,7 @@ public class AnalysisSettings {
     }
 
     public static void setDeceasedOrganismsAnalysisOn(boolean deceasedOrganismsAnalysisOn) {
-        deceasedOrganismsAnalysisOn = deceasedOrganismsAnalysisOn;
+        AnalysisSettings.deceasedOrganismsAnalysisOn = deceasedOrganismsAnalysisOn;
     }
 
     public static boolean isLivingOrganismsAnalysisOn() {
@@ -17,6 +17,6 @@ public class AnalysisSettings {
     }
 
     public static void setLivingOrganismsAnalysisOn(boolean livingOrganismsAnalysisOn) {
-        livingOrganismsAnalysisOn = livingOrganismsAnalysisOn;
+        AnalysisSettings.livingOrganismsAnalysisOn = livingOrganismsAnalysisOn;
     }
 }

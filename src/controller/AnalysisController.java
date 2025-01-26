@@ -6,6 +6,7 @@ import analyser.CurrentLivingOrganismsAnalyser;
 import analyser.CurrentOrganismsAnalyser;
 import simulation.IslandSimulator;
 import simulation.Organism;
+import simulation.Plant;
 import viewer.AnalysisViewer;
 
 import java.util.ArrayList;

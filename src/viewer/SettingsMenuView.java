@@ -10,7 +10,8 @@ public class SettingsMenuView {
         System.out.println("1\t Size of the island.");
         System.out.println("2\t Number of initial organisms on the island.");
         System.out.println("3\t Number of turns in a simulation.");
-        System.out.println("4\t Go back to the start menu.");
+        System.out.println("4\t Analysis Settings");
+        System.out.println("5\t Go back to the start menu.");
     }
 
     public void displayNotAMenuOption() {

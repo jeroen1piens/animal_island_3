@@ -1,25 +1,25 @@
 package simulation;
 
 public class StartSettings {
-    private static int bearCount = 40;
-    private static int boaCount = 40;
-    private static int boarCount = 30;
-    private static int buffaloCount = 30;
-    private static int caterpillarCount = 1000;
-    private static int deerCount = 40;
-    private static int duckCount = 50;
-    private static int eagleCount = 40;
-    private static int foxCount = 40;
-    private static int goatCount = 50;
-    private static int horseCount = 40;
+    private static int bearCount = 20;
+    private static int boaCount = 20;
+    private static int boarCount = 20;
+    private static int buffaloCount = 20;
+    private static int caterpillarCount = 20;
+    private static int deerCount = 20;
+    private static int duckCount = 20;
+    private static int eagleCount = 20;
+    private static int foxCount = 20;
+    private static int goatCount = 100;
+    private static int horseCount = 100;
     private static int mouseCount = 100;
     private static int plantCount = 5000;
     private static int rabbitCount = 100;
-    private static int sheepCount = 500;
-    private static int wolfCount = 40;
-    private static int horizontalLengthIsland = 20;
-    private static int verticallengthIsland = 20;
-    private static int turnCount = 100;
+    private static int sheepCount = 100;
+    private static int wolfCount = 15;
+    private static int horizontalLengthIsland = 10;
+    private static int verticallengthIsland = 10;
+    private static int turnCount = 20;
 
     public static int getBearCount() {
         return bearCount;

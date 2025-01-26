@@ -75,10 +75,13 @@ public abstract class Animal extends Organism {
         this.maxTilesPerTurn = maxTilesPerTurn;
     }
 
+
+    //Helper method for the move method
     private int chooseNextXCoordinate() {
         return ThreadLocalRandom.current().nextInt(getXCoordinate() - 1 >= 0 ? getXCoordinate() - 1 : getXCoordinate(), getXCoordinate() + 1 < getIslandSimulator().getHorizontalLengthIsland() ? getXCoordinate() + 2 : getXCoordinate() + 1);
     }
 
+    //Helper method for the move method
     private int chooseNextYCoordinate() {
         return ThreadLocalRandom.current().nextInt(getYCoordinate() - 1 >= 0 ? getYCoordinate() - 1 : getYCoordinate(), getYCoordinate() + 1 < getIslandSimulator().getVerticalLengthIsland() ? getYCoordinate() + 2 : getYCoordinate() + 1);
     }
@@ -94,6 +97,7 @@ public abstract class Animal extends Organism {
         }
     }
 
+    //Helper method for the collectFood method
     private List<Organism> localiseAvailableFood() {
         List<Organism> allOrganismList = getIslandSimulator().retrieveAllTileOrganisms(getXCoordinate(), getYCoordinate());
         Collections.shuffle(allOrganismList, ThreadLocalRandom.current());
@@ -103,6 +107,7 @@ public abstract class Animal extends Organism {
         return availableFood;
     }
 
+    //Method by which the animal looks for food on the tile it currently resides
     public void collectFood() {
         for (Organism organism : localiseAvailableFood()) {
             if (fedLevel >= 100) {
@@ -122,6 +127,7 @@ public abstract class Animal extends Organism {
         }
     }
 
+    //Helper method for the collectFood method
     private boolean catchFood(Organism organism) {
         int catchProbability = getCatchMap().get(organism.getClass().getSimpleName());
         int randomInt = ThreadLocalRandom.current().nextInt(0, 100);
@@ -133,10 +139,12 @@ public abstract class Animal extends Organism {
         }
     }
 
+
     protected void reduceFedLevel() {
         fedLevel -= 20;
     }
 
+    //Helper method to the chooseMate method
     private Set<Animal> localisePotentialMates() {
         Set<Organism> set = getIslandSimulator().retrieveSpecificOrganisms(this.getClass(), getXCoordinate(), getYCoordinate());
         set.remove(this);
@@ -148,6 +156,7 @@ public abstract class Animal extends Organism {
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
+    //Helper method to the breed method
     protected Animal chooseMate() {
         for (Animal animal : localisePotentialMates()) {
             synchronized (Animal.class) {
@@ -160,6 +169,8 @@ public abstract class Animal extends Organism {
         }
         return null;
     }
+
+    //Method by which the animal can procreate
     public boolean breed() {
         if (getFedLevel() <= getMinBreedingFoodlevel()) {
             return false;
@@ -180,6 +191,7 @@ public abstract class Animal extends Organism {
         }
     }
 
+    //Method that can be used by a simulator to schedule an Animal as an individual thread
     public void run() {
         try {
             synchronized (this) {
@@ -199,6 +211,7 @@ public abstract class Animal extends Organism {
         }
     }
 
+    //Method can be used by a simulator to reset certain parameters for the next turn
     @Override
     public void prepareForNextTurn() {
         hasMate = false;

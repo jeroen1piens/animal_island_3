@@ -14,15 +14,12 @@ public class IslandSimulator {
     private int verticalLengthIsland;
     private OrganismFactory organismFactory;
     private ScheduledExecutorService scheduledExecutorService;
-    private Analytics analytics;
-
     private AnalysisController analysisController;
 
     public IslandSimulator() {
         organismFactory = new OrganismFactory();
         island = createIsland(StartSettings.getHorizontalLengthIsland(), StartSettings.getVerticallengthIsland());
         randomlySpreadOrganisms(createAllInitialOrganisms());
-        analytics = new Analytics();
         turn = 0;
     }
 
@@ -60,7 +57,7 @@ public class IslandSimulator {
         this.analysisController = analysisController;
     }
 
-
+    //Adds an organism on a tile
     public boolean addOrganism(Organism organism, int xCoordinate, int yCoordinate) {
         Tile tile = getTile(xCoordinate, yCoordinate);
         synchronized (tile) {
@@ -69,11 +66,13 @@ public class IslandSimulator {
         }
     }
 
+    //Removes an organism from a tile
     public void removeOrganism(Organism organism, int xCoordinate, int yCoordinate) {
         Tile tile = getTile(xCoordinate, yCoordinate);
         tile.removeOrganism(organism);
     }
 
+    //Informs if the organism is present on the tile with the coordinates the organism holds
     public boolean validateCoordinates(Organism organism) {
         if (getTile(organism.getXCoordinate(), organism.getYCoordinate()).contains(organism)) {
             return true;
@@ -83,10 +82,9 @@ public class IslandSimulator {
         }
     }
 
-    public Set<Organism> retrieveSpecificOrganisms(Class<? extends Organism> clazz, int xCoordinate, int yCoordinate) {
-        return getTile(xCoordinate, yCoordinate).retrieveSpecificOrganisms(clazz);
-    }
 
+
+    //Retrieves all organisms from all classes and from all tiles
     public List<Organism> retrieveAllIslandOrganisms() {
         List<Organism> organismList = new ArrayList<>();
         for (int i = 0; i < verticalLengthIsland; i++) {
@@ -97,6 +95,7 @@ public class IslandSimulator {
         return organismList;
     }
 
+    //Retrieves all organisms from all classes from the tile with the specified coordinates
     public List<Organism> retrieveAllTileOrganisms(int xCoordinate, int yCoordinate) {
         List<Organism> organismList = new ArrayList<>();
         Tile tile = getTile(xCoordinate, yCoordinate);
@@ -104,33 +103,24 @@ public class IslandSimulator {
         return organismList;
     }
 
+    //Retrieves all organisms from a certain class from the tile with the specified coordinates
+    public Set<Organism> retrieveSpecificOrganisms(Class<? extends Organism> clazz, int xCoordinate, int yCoordinate) {
+        return getTile(xCoordinate, yCoordinate).retrieveSpecificOrganisms(clazz);
+    }
+
+
+    //Schedules each organism in the specified collection to be run as an individual thread
     public void scheduleNextTurn(Collection<Organism> organisms, ScheduledExecutorService scheduledExecutorService) {
         for (Organism organism : organisms) {
             scheduledExecutorService.schedule(organism, 10, TimeUnit.MILLISECONDS);
         }
     }
 
-    public void simulateInOneLoop(int turns) {
-        for (int i = 0; i < turns; i++) {
-            for (Organism organism : retrieveAllIslandOrganisms()) {
-                organism.run();
-            }
-            //System.out.println(retrieveAllOrganisms());
-            System.out.println("Organisms count: " + retrieveAllIslandOrganisms().size());
-            analytics.updateAllOrganismsCollection(retrieveAllIslandOrganisms());
-            System.out.println("Plant: " + analytics.getOrganismsCountMap().get("Plant"));
-            System.out.println("Sheep: " + analytics.getOrganismsCountMap().get("Sheep"));
-            System.out.println("Wolf: " + analytics.getOrganismsCountMap().get("Wolf"));
-            System.out.println("Bear: " + analytics.getOrganismsCountMap().get("Bear"));
-
-        }
-
-    }
-
+    //Start simulating the actions of the organisms on the island
     public void simulate() {
         for (int i = 0; i < StartSettings.getTurnCount(); i++) {
             turn++;
-            scheduledExecutorService = Executors.newScheduledThreadPool(3);
+            scheduledExecutorService = Executors.newScheduledThreadPool(1);
             Set<Organism> startTurnOrganisms = retrieveAllIslandOrganisms().stream().collect(Collectors.toSet());
             prepareForNextTurn(startTurnOrganisms);
             scheduleNextTurn(startTurnOrganisms, scheduledExecutorService);
@@ -141,40 +131,20 @@ public class IslandSimulator {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                analysisController.updateCurrentOrganisms(turn, startTurnOrganisms);
             }
-            /*
-            System.out.println("Turn: " + turn);
-            System.out.println("Organisms count: " + retrieveAllIslandOrganisms().size());
-            analytics.updateAllOrganismsCollection(retrieveAllIslandOrganisms());
-            System.out.println("Bear: " + analytics.getOrganismsCountMap().get("Bear"));
-            System.out.println("Boa: " + analytics.getOrganismsCountMap().get("Boa"));
-            System.out.println("Boar: " + analytics.getOrganismsCountMap().get("Boar"));
-            System.out.println("Buffalo: " + analytics.getOrganismsCountMap().get("Buffalo"));
-            System.out.println("Caterpillar: " + analytics.getOrganismsCountMap().get("Caterpillar"));
-            System.out.println("Deer: " + analytics.getOrganismsCountMap().get("Deer"));
-            System.out.println("Duck: " + analytics.getOrganismsCountMap().get("Duck"));
-            System.out.println("Eagle: " + analytics.getOrganismsCountMap().get("Eagle"));
-            System.out.println("Fox: " + analytics.getOrganismsCountMap().get("Fox"));
-            System.out.println("Goat: " + analytics.getOrganismsCountMap().get("Goat"));
-            System.out.println("Horse: " + analytics.getOrganismsCountMap().get("Horse"));
-            System.out.println("Mouse " + analytics.getOrganismsCountMap().get("Mouse"));
-            System.out.println("Plant: " + analytics.getOrganismsCountMap().get("Plant"));
-            System.out.println("Rabbit: " + analytics.getOrganismsCountMap().get("Rabbit"));
-            System.out.println("Sheep: " + analytics.getOrganismsCountMap().get("Sheep"));
-            System.out.println("Wolf: " + analytics.getOrganismsCountMap().get("Wolf"));
-            turn++;
-            */
+            analysisController.updateCurrentOrganisms(turn, startTurnOrganisms);
         }
     }
 
+    //Helper method of the simulate method. Makes that certain parameters (e.g. newBorn, hasMate) are reset for the next turn.
     private void prepareForNextTurn(Collection<Organism> organisms) {
         for (Organism organism : organisms) {
             organism.prepareForNextTurn();
         }
     }
 
-    public List<Organism> createAllInitialOrganisms() {
+    //Helper method to the constructor. Creates the initial organisms as specified in the startSettings.
+    private List<Organism> createAllInitialOrganisms() {
         List<Organism> initialOrganismsList = new ArrayList<>();
 
         for (int i = 0; i < StartSettings.getBearCount(); i++) {
@@ -239,7 +209,8 @@ public class IslandSimulator {
         return initialOrganismsList;
     }
 
-    public void randomlySpreadOrganisms(List<Organism> organisms) {
+    //Helper method to the constructor. Randomly spreads the organisms on the island.
+    private void randomlySpreadOrganisms(List<Organism> organisms) {
         Random random = new Random();
         int randomX;
         int randomY;

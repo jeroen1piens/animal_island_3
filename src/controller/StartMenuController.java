@@ -31,11 +31,6 @@ public class StartMenuController {
         }
     }
 
-    public static void main(String[] args) {
-        StartMenuController startMenuController = new StartMenuController();
-        startMenuController.startProgram();
-    }
-
     public void startSimulation() {
         AnalysisController analysisController = new AnalysisController(islandSimulator);
         islandSimulator.setAnalysisController(analysisController);

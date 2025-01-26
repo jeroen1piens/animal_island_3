@@ -35,6 +35,7 @@ public abstract class Organism implements Runnable {
         return newBorn;
     }
 
+    //Makes the organism die. The organism will be removed from the islandSimulator.
     public void die() {
         alive = false;
         islandSimulator.removeOrganism(this, xCoordinate, yCoordinate);
@@ -42,7 +43,7 @@ public abstract class Organism implements Runnable {
         yCoordinate = -1;
     }
 
-
+    //Method by which the initial position of the organism can be set
     public boolean setInitialPosition(IslandSimulator islandSimulator, int newXCoordinate, int newYCoordinate) {
         this.islandSimulator = islandSimulator;
         boolean successful = islandSimulator.addOrganism(this, newXCoordinate, newYCoordinate);
@@ -57,6 +58,7 @@ public abstract class Organism implements Runnable {
         return false;
     }
 
+    //Method by which the position of the organism can be changed
     public boolean changePosition(int newXCoordinate, int newYCoordinate) {
         if (this.xCoordinate == newXCoordinate && this.yCoordinate == newYCoordinate) {
             if (!getIslandSimulator().validateCoordinates(this)) {
@@ -83,6 +85,7 @@ public abstract class Organism implements Runnable {
         }
     }
 
+    //Method can be used by a simulator to reset certain parameters for the next turn
     public abstract void prepareForNextTurn();
 }
 

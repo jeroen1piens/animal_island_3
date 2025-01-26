@@ -10,6 +10,7 @@ public class SettingsMenuController {
     IslandSizeSettingsController islandSizeSettingsController = new IslandSizeSettingsController(this);
     OrganismsSettingsController organismsSettingsController = new OrganismsSettingsController((this));
     TurnsSettingsController turnsSettingsController = new TurnsSettingsController(this);
+    AnalysisSettingsController analysisSettingsController = new AnalysisSettingsController(this);
 
     public SettingsMenuController(StartMenuController startMenuController) {
         this.startMenuController = startMenuController;
@@ -23,7 +24,8 @@ public class SettingsMenuController {
             case "1" -> islandSizeSettingsController.chooseOption();
             case "2" -> organismsSettingsController.chooseOption();
             case "3" -> turnsSettingsController.chooseOption();
-            case "4" -> startMenuController.chooseOption();
+            case "4" -> analysisSettingsController.chooseOption();
+            case "5" -> startMenuController.chooseOption();
             default -> {
                 settingsMenuView.displayNotAMenuOption();
                 chooseOption();

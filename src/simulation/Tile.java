@@ -29,6 +29,7 @@ public class Tile {
     public Tile() {
     }
 
+    //Informs if the tile is full for a certain organism species
     public boolean isFull(Organism organism) {
         if (!organismMap.containsKey(organism.getClass())) {
             return false;
@@ -42,6 +43,7 @@ public class Tile {
         }
     }
 
+    //Provides a set of all the Organism classes in the organismMap in this tile.
     private Set<Class<? extends Organism>> keySet() {
         return organismMap.keySet();
     }
@@ -51,10 +53,12 @@ public class Tile {
         return set;
     }
 
+    //Helper method to addOrganism.
     private void addOrganismClass(Class<? extends Organism> clazz) {
         organismMap.put(clazz, ConcurrentHashMap.newKeySet());
     }
 
+    //Method adds the organism to the organismMap in this tile.
     public synchronized boolean addOrganism(Organism organism) {
         if (isFull(organism)) {
             return false;
@@ -69,6 +73,8 @@ public class Tile {
             return true;
         }
     }
+
+    //Removes an organism for the organismMap in this tile
     public void removeOrganism(Organism organism) {
         if (organismMap.get(organism.getClass()).contains(organism)) {
             organismMap.get(organism.getClass()).remove(organism);
@@ -78,6 +84,7 @@ public class Tile {
         }
     }
 
+    //Provides a list of all organisms present in this tile
     public List<Organism> retrieveAllOrganisms() {
         List<Organism> organismList = new ArrayList<>();
         for (Class<? extends Organism> clazz : keySet()) {
@@ -86,9 +93,12 @@ public class Tile {
         return organismList;
     }
 
+    //informs if an organism of a certain class is present in this tile
     public boolean contains(Class<? extends Organism> clazz) {
         return organismMap.containsKey(clazz);
     }
+
+    //informs if an organism of a certain class is present in this tile
     public boolean contains(Organism organism) {
         if (contains(organism.getClass())) {
             return organismMap.get(organism.getClass()).contains(organism);
